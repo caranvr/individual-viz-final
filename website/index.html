@@ -53,10 +53,9 @@
 			<h2>Weekend nighttime taxi trips before and after Covid</h2>
 			<label id='month'></label>
 			<input id='slider' type='range' min='0' max='11' step='1' value='0' />
-			<div id="chart">
-				<button>Total last call trips</button>
-				<button>Median income of destination zones</button>
-			</div>
+			<button onclick="update(trips)">Total last call trips</button>
+			<button onclick="update(income)">Median income of destination zones</button>
+			<div id="chart"></div>
 		</div>
 		<div id="map"></div>
 		<div class="map-overlay"><p>Income of destination taxi zone</p></div>
@@ -113,13 +112,17 @@
 					url: 'mapbox://caranvr.cgxobokf'
 				},
 				'source-layer': 'agg_flows_w_income-4cvyjy',
+				'layout': {
+					'line-cap': 'round'
+				},
 				'paint': {
 					//change line width depending on number of trips
 					'line-width': [
 						'interpolate',
 						['linear'],
 						['get', 'size'],
-						1, 0.1,
+						1, 0,
+						3, 0.1,
 						15, 5
 					],
 					'line-color': {
@@ -149,7 +152,92 @@
 
 		//CHART SCRIPT
 
+		//load csv, an array of objects
+		d3.csv('chart_data.csv', function(data) {
 
+			var trips = [];
+			var income = [];
+
+			 for(var i = 0; i < data.length; i++) {
+			 	trips.push({'ser1': data[i].month, 'ser2': data[i].size});
+			 	income.push({'ser1': data[i].month, 'ser2': data[i].DO_income});
+			 };
+
+			 //testing to make sure datasets are in the correct format for the chart
+			 console.log(trips);
+			 console.log(income);
+
+			 var margin = {
+				'top': 10,
+				'right': 30,
+				'bottom': 30,
+				'left': 50
+			},
+			width = 350 - margin.left - margin.right,
+			height = 400 - margin.top - margin.bottom;
+
+			var svg = d3.select('#chart')
+				.append("svg")
+					.attr("width", width + margin.left + margin.right)
+					.attr("height", height + margin.top + margin.bottom)
+				.append("g")
+					.attr("transform",
+						"translate(" + margin.left + "," + margin.top + ")");
+
+			//x axis
+			var x = d3.scaleLinear().range([0,width]);
+			var xAxis = d3.svg.axisBottom().scale(x);
+			svg.append("g")
+				.attr("transform", "translate(0," + height + ")")
+				.attr("class", "myXaxis")
+
+		//y axis
+			var y = d3.scaleLinear().range([height, 0]);
+			var yAxis = d3.axisLeft().scale(y);
+			svg.append("g")
+				.attr("class","myYaxis")
+
+		//function for updating plot
+			function update(data) {
+				x.domain([0, d3.max(data, function(d) {
+					return d.ser1
+				})]);
+
+				svg.selectAll(".myXaxis").transition()
+					.duration(1000)
+					.call(xAxis);
+
+				y.domain([0, d3.max(data, function(d) {
+					return d.ser2
+				})]);
+
+				svg.selectAll(".myYaxis").transition()
+					.duration(1000)
+					.call(yAxis);
+
+				var u = svg.selectAll(".lineTest")
+					.data([data], function(d){ return d.ser1 });
+
+				u.enter()
+					.append("path")
+					.attr("class", "lineTest")
+					.merge(u)
+					.transition()
+					.duration(1000)
+					.attr("d", d3.line()
+						.x(function(d) { return x(d.ser1); })
+						.y(function(d) { return y(d.ser2); }))
+					.attr("fill", "none")
+					.attr("stroke", "steelblue")
+					.attr("stroke-width", 2.5);
+
+				};
+
+			update(trips);
+
+		});
+
+		
 
 	</script>
 
