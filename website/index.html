@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
+	<title>Last Call Taxi Trips in 2020</title>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+	<style>
+		body {
+			margin: 0;
+		}
+
+		.container {
+			display: flex;
+			min-height: 100vh;
+		}
+
+		.sidebar {
+			width: 30%;
+			padding: 12px;
+			background-color: #242424;
+			color: #fff;
+		}
+
+		#map {
+			width: 70%;
+		}
+
+		#slider {
+			width: 100%;
+		}
+
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="sidebar">
+			<h1>Last Call</h1>
+			<h2>Weekend nighttime taxi trips before and after Covid</h2>
+			<label id='month'></label>
+			<input id='slider' type='range' min='0' max='11' step='1' value='0' />
+		</div>
+		<div id="map">
+		</div>
+	</div>
+
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1IjoiY2FyYW52ciIsImEiOiJja2s0Z2V6aDIwMmhzMm5udGNkZ2l5cWcyIn0.PVNv_8KPbTaUc9brjHUVGw';
+
+		//load a new map into map div
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/caranvr/ckm1vonpp9g7f17qpfu49pxj8',
+			center: [-73.9063, 40.7659],
+			zoom: 10,
+			transition: {
+				'duration': 1000,
+				'delay': 0
+			}
+		});
+
+		//array of months
+		var months = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+		];
+
+		function filterBy(month) {
+			var filters = ['==', 'month', (month+1)];
+			map.setFilter('flows', filters);
+			document.getElementById('month').textContent = months[month];
+		};
+
+		map.on('load', function(){
+
+			//flow layer
+			map.addLayer({
+				'id': 'flows',
+				'type': 'line',
+				'source': {
+					type: 'vector',
+					url: 'mapbox://caranvr.52soqws2'
+				},
+				'source-layer': 'agg_flows_web-4rwqsc',
+				'paint': {
+					//change line width depending on number of trips
+					'line-width': [
+						'interpolate',
+						['exponential', 2],
+						['get', 'size'],
+						1, 0.1,
+						800, 0.6
+					],
+					'line-color': '#fff',
+					'line-opacity': 0.7
+				}
+			});
+
+			filterBy(0);
+
+			document.getElementById('slider').addEventListener('input', function(e) {
+				var month = parseInt(e.target.value, 10);
+				filterBy(month);
+			});
+
+		});
+
+	</script>
+
+</body>
+
+
+</html>
