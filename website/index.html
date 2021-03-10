@@ -7,6 +7,8 @@
 	<title>Last Call Taxi Trips in 2020</title>
 	<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+	<script charset="utf-8" src="https://d3js.org/d3.v4.min.js"></script>
+	<script charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/dimple/2.3.0/dimple.latest.min.js"></script>
 	<style>
 		body {
 			margin: 0;
@@ -15,13 +17,13 @@
 		.container {
 			display: flex;
 			min-height: 100vh;
+			color: #fff;
 		}
 
 		.sidebar {
 			width: 30%;
 			padding: 12px;
 			background-color: #242424;
-			color: #fff;
 		}
 
 		#map {
@@ -30,6 +32,15 @@
 
 		#slider {
 			width: 100%;
+			margin-bottom: 12px;
+		}
+
+		.map-overlay {
+			position: absolute;
+			left: 33%;
+			top: 3%;
+			padding: 10px;
+			background-color: rgba(36, 36, 36, 0.6);
 		}
 
 	</style>
@@ -42,12 +53,19 @@
 			<h2>Weekend nighttime taxi trips before and after Covid</h2>
 			<label id='month'></label>
 			<input id='slider' type='range' min='0' max='11' step='1' value='0' />
+			<div id="chart">
+				<button>Total last call trips</button>
+				<button>Median income of destination zones</button>
+			</div>
 		</div>
-		<div id="map">
-		</div>
+		<div id="map"></div>
+		<div class="map-overlay"><p>Income of destination taxi zone</p></div>
 	</div>
 
 	<script>
+
+		//MAP SCRIPT
+
 		mapboxgl.accessToken = 'pk.eyJ1IjoiY2FyYW52ciIsImEiOiJja2s0Z2V6aDIwMmhzMm5udGNkZ2l5cWcyIn0.PVNv_8KPbTaUc9brjHUVGw';
 
 		//load a new map into map div
@@ -92,19 +110,30 @@
 				'type': 'line',
 				'source': {
 					type: 'vector',
-					url: 'mapbox://caranvr.52soqws2'
+					url: 'mapbox://caranvr.cgxobokf'
 				},
-				'source-layer': 'agg_flows_web-4rwqsc',
+				'source-layer': 'agg_flows_w_income-4cvyjy',
 				'paint': {
 					//change line width depending on number of trips
 					'line-width': [
 						'interpolate',
-						['exponential', 2],
+						['linear'],
 						['get', 'size'],
 						1, 0.1,
-						800, 0.6
+						15, 5
 					],
-					'line-color': '#fff',
+					'line-color': {
+						property: 'DO_income',
+						stops: [
+							[NaN, '#ccc'],
+							[0, '#ccc'],
+							[23900, '#450256'],
+							[51900, '#3B1C8C'],
+							[73900, '#21908D'],
+							[102400, '#5AC865'],
+							[142300, '#F9E721']
+						]
+					},
 					'line-opacity': 0.7
 				}
 			});
@@ -117,6 +146,10 @@
 			});
 
 		});
+
+		//CHART SCRIPT
+
+
 
 	</script>
 
