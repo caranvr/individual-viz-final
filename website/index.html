@@ -6,6 +6,7 @@
 	<meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
 	<title>Last Call Taxi Trips in 2020</title>
 	<link href="./css/style.css" rel="stylesheet" />
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
 </head>
@@ -13,12 +14,21 @@
 <body>
 	<div class="container">
 		<div class="sidebar">
-			<h1>Last Call</h1>
-			<p>Before the Covid-19 pandemic, bars and nightclubs in New York City closed at 2AM.</p>
+			<h1>Last Call in the Big Apple</h1>
+			<h2>Late-night weekend taxi trip destinations in 2020</h2>
+			<p class='emphasis'>How did the closure of nightlife and departure of wealthy residents change the demographics of late-night mobility patterns?</p>
+			
+			<div class='footer'>
+			<a href="#" class='info-link' onclick="show('overlay')">About</a> <a href="#" class='info-link'>Github</a>
+			</div>
+		</div>
+		<div id="map"></div>
+		<div class="map-overlay">
+		<h3>Visualise changes in dropoff volume over the year:</h3>
 			<label id='month'></label>
 			<input id='slider' type='range' min='0' max='11' step='1' value='0' />
 			<div id='filters'>
-				<h3>Income quintile (USD)</h3>
+				<h3 id='subhead'>Filter taxi zones by income quintile (USD):</h3>
 					<input id='all' type='radio' name='toggle' value='all' checked='checked'>
 					<label for='all'>All</label><br>
 					<input id='low' type='radio' name='toggle' value='low'>
@@ -33,8 +43,15 @@
 					<label for='high'>142,300+</label>
 			</div>
 		</div>
-		<div id="map"></div>
 		<div class="map-overlay" id="legend"><p>Mean income of taxi zone (USD)</p></div>
+		<div id="overlay">
+			<div id="about">
+				<p class='text'>Before the Covid-19 pandemic, bars and nightclubs in New York City closed their doors to new patrons at <a href="https://gothamist.com/food/2-am-closing-time-becoming-norm-for-manhattan-bars">2AM</a>, after which revelers would begin making their way home.</p>
+				<p class='text'>Nightlife was halted in March 2020 and has been sputtering since, with many bars closing due to the economic impact of the pandemic, and a <a href="https://ny.eater.com/2020/12/30/22203053/nyc-coronavirus-timeline-restaurants-bars-2020">10PM curfew</a> instituted in November. At the same time, New York's demographic landscape changed drastically, with the richest residents <a href="https://www.nytimes.com/interactive/2020/05/15/upshot/who-left-new-york-coronavirus.html">leaving the city</a> at the start of the pandemic.</p>
+				<p>To show the effects of these changes on late-night weekend mobility patterns, this map visualises the destinations of over 26,000 yellow taxi trips, coloured by income. Explore how taxi trip volume and passenger demographics changed after the onset of the pandemic and over the course of its development.</p><br>
+				<a href="#" class="info-link" onclick="hide('overlay')">Close</a>
+			</div>
+		</div>
 	</div>
 	<script src="./js/script.js"></script>
 </body>
