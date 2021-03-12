@@ -5,154 +5,38 @@
 	<meta charset="utf-8">
 	<meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
 	<title>Last Call Taxi Trips in 2020</title>
+	<link href="./css/style.css" rel="stylesheet" />
 	<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
-	<script charset="utf-8" src="https://d3js.org/d3.v4.min.js"></script>
-	<script charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/dimple/2.3.0/dimple.latest.min.js"></script>
-	<style>
-		body {
-			margin: 0;
-		}
-
-		.container {
-			display: flex;
-			min-height: 100vh;
-			color: #fff;
-		}
-
-		.sidebar {
-			width: 30%;
-			padding: 12px;
-			background-color: #242424;
-		}
-
-		#map {
-			width: 70%;
-		}
-
-		#slider {
-			width: 100%;
-			margin-bottom: 12px;
-		}
-
-		.map-overlay {
-			position: absolute;
-			left: 33%;
-			top: 3%;
-			padding: 10px;
-			background-color: rgba(36, 36, 36, 0.6);
-		}
-
-	</style>
 </head>
 
 <body>
 	<div class="container">
 		<div class="sidebar">
 			<h1>Last Call</h1>
-			<h2>Weekend nighttime taxi trips before and after Covid</h2>
+			<p>Before the Covid-19 pandemic, bars and nightclubs in New York City closed at 2AM.</p>
 			<label id='month'></label>
 			<input id='slider' type='range' min='0' max='11' step='1' value='0' />
-			<div id="chart">
-				<button>Total last call trips</button>
-				<button>Median income of destination zones</button>
+			<div id='filters'>
+				<h3>Income quintile (USD)</h3>
+					<input id='all' type='radio' name='toggle' value='all' checked='checked'>
+					<label for='all'>All</label><br>
+					<input id='low' type='radio' name='toggle' value='low'>
+					<label for='low'>23,900 – 51,900</label><br>
+					<input id='low-middle' type='radio' name='toggle' value='low-middle'>
+					<label for='low-middle'>51,900 – 73,900</label><br>
+					<input id='middle' type='radio' name='toggle' value='middle'>
+					<label for='middle'>73,900 – 102,400</label><br>
+					<input id='high-middle' type='radio' name='toggle' value='high-middle'>
+					<label for='high-middle'>102,400 – 142,300</label><br>
+					<input id='high' type='radio' name='toggle' value='high'>
+					<label for='high'>142,300+</label>
 			</div>
 		</div>
 		<div id="map"></div>
-		<div class="map-overlay"><p>Income of destination taxi zone</p></div>
+		<div class="map-overlay" id="legend"><p>Mean income of taxi zone (USD)</p></div>
 	</div>
-
-	<script>
-
-		//MAP SCRIPT
-
-		mapboxgl.accessToken = 'pk.eyJ1IjoiY2FyYW52ciIsImEiOiJja2s0Z2V6aDIwMmhzMm5udGNkZ2l5cWcyIn0.PVNv_8KPbTaUc9brjHUVGw';
-
-		//load a new map into map div
-		var map = new mapboxgl.Map({
-			container: 'map',
-			style: 'mapbox://styles/caranvr/ckm1vonpp9g7f17qpfu49pxj8',
-			center: [-73.9063, 40.7659],
-			zoom: 10,
-			transition: {
-				'duration': 1000,
-				'delay': 0
-			}
-		});
-
-		//array of months
-		var months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-		];
-
-		function filterBy(month) {
-			var filters = ['==', 'month', (month+1)];
-			map.setFilter('flows', filters);
-			document.getElementById('month').textContent = months[month];
-		};
-
-		map.on('load', function(){
-
-			//flow layer
-			map.addLayer({
-				'id': 'flows',
-				'type': 'line',
-				'source': {
-					type: 'vector',
-					url: 'mapbox://caranvr.cgxobokf'
-				},
-				'source-layer': 'agg_flows_w_income-4cvyjy',
-				'paint': {
-					//change line width depending on number of trips
-					'line-width': [
-						'interpolate',
-						['linear'],
-						['get', 'size'],
-						1, 0.1,
-						15, 5
-					],
-					'line-color': {
-						property: 'DO_income',
-						stops: [
-							[NaN, '#ccc'],
-							[0, '#ccc'],
-							[23900, '#450256'],
-							[51900, '#3B1C8C'],
-							[73900, '#21908D'],
-							[102400, '#5AC865'],
-							[142300, '#F9E721']
-						]
-					},
-					'line-opacity': 0.7
-				}
-			});
-
-			filterBy(0);
-
-			document.getElementById('slider').addEventListener('input', function(e) {
-				var month = parseInt(e.target.value, 10);
-				filterBy(month);
-			});
-
-		});
-
-		//CHART SCRIPT
-
-
-
-	</script>
-
+	<script src="./js/script.js"></script>
 </body>
 
 
