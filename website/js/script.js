@@ -41,7 +41,10 @@ map.on('load', function(){
 		}
 	}
 
-			//dropoff layer
+	//glowy circle layers! 
+	//adapted from https://blog.mapbox.com/glow-effect-the-firefly-technique-23eff7297075
+
+	//dropoff layer
 	map.addLayer({
 		id: 'dropoffs-1',
 		type: 'circle',
@@ -163,6 +166,8 @@ map.on('load', function(){
 		setData(month);
 	});
 
+	//filtering by income 
+	//adapted from https://docs.mapbox.com/help/tutorials/show-changes-over-time/
 	document.getElementById('filters').addEventListener('change', function(e) {
 		var inc = e.target.value;
 			  // update the map filter
@@ -199,7 +204,8 @@ map.on('load', function(){
 		map.setFilter('dropoffs-3', ['all', filterInc]);
 	});
 
-			//add legend
+	//add legend
+	//adapted from https://docs.mapbox.com/help/tutorials/choropleth-studio-gl-pt-2/
 	var layers = ['23,900 – 51,900', '51,900 – 73,900', '73,900 – 102,400', '102,400 – 142,300', '142,300+'];
 	var colors = ['#450256', '#3B1C8C', '#21908D', '#5AC865', '#F9E721'];
 
@@ -222,7 +228,8 @@ map.on('load', function(){
 
 });
 
-//popup
+	//popup for about page
+	//adapted from https://codepen.io/adrienlochon/pen/Jgjrx
 	$ = function(id) {
 		return document.getElementById(id);
 	}
